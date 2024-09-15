@@ -1,0 +1,3 @@
+[submodule "optd"]
+	path = optd
+	url = https://github.com/cmu-db/optd

@@ -1,0 +1,9 @@
+# Start postgres server
+docker run -p 5432:5432 --name mypostgres -e POSTGRES_USER=jruan -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256 -d postgres
+
+# Check if up
+# Expected: "curl: (52) Empty reply from server"
+curl localhost:5432
+
+# Run the benchmark
+ cargo run --release --bin optd-perfbench cardbench tpch --scale-factor 0.01 --pguser jruan --pgpassword mysecretpassword
