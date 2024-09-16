@@ -52,7 +52,7 @@ TODO integrate model output with optd's benchmarking
 
 We will use CMU optd's cardinality benchmarking feature to test performance of the cost model. [optd](https://github.com/cmu-db/optd/tree/main) has been included as a Github submodule in this repository.
 
-Before running the benchmark, you will need to manually run Postgres on your machine. Below I included instructions for doing so, let me ([@jespiron](https://github.com/jespiron)) know if it doesn't work.
+Before running the benchmark, you will need to manually run Postgres on your machine. Below I included instructions for doing so via Docker container, let me ([@jespiron](https://github.com/jespiron)) know if it doesn't work. An alternative way is in the `patrick/` folder as suggested in [docs](https://cmu-db.github.io/optd/cost_model_benchmarking.html).
 
 ## Setup
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -74,3 +74,5 @@ If you see `"curl: (52) Empty reply from server` it works
 ```
  cargo run --release --bin optd-perfbench cardbench tpch --scale-factor 0.01 --pguser your-username --pgpassword your-password
  ```
+
+See [docs](https://cmu-db.github.io/optd/cost_model_benchmarking.html) for more on the benchmarking tool
