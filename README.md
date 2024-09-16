@@ -2,7 +2,7 @@
 
 Final project for 11785.
 
-**Group name:** TODO
+**Group name:** Group 22
 
 **Group Members**
 * [Jessica Ruan (jwruan)](https://github.com/jespiron)
