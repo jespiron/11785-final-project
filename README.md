@@ -44,6 +44,8 @@ The reason for this is the more branches we have on remote, the more branches ot
 2. Test the models (see Testing section for how)
 3. Open PR
 
+Input (2D images) -> give to diffusion model (edits 2D images) -> convert 2D images to 3D point cloud -> gaussian splatting -> wow
+
 # Testing
 
 Two ways to test.
