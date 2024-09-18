@@ -44,7 +44,9 @@ The reason for this is the more branches we have on remote, the more branches ot
 2. Test the models (see Testing section for how)
 3. Open PR
 
-Input (2D images) -> give to diffusion model (edits 2D images) -> convert 2D images to 3D point cloud -> gaussian splatting -> wow
+[TODO] replace with proper UML diagram when finalized, handdrawn is just easier to edit
+
+![workflow](./assets/workflow.jpg)
 
 # Testing
 
@@ -58,4 +60,6 @@ Renderer
 
 ## CLIP Similarity
 
-TODO
+Compute pairwise similarity of edited images
+
+[REVIEW] Then get the median similarity score out of all pairwise scores (or some other measure of center)
