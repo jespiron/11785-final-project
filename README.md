@@ -54,9 +54,10 @@ Two ways to test.
 
 ## 👁️ Your Eyes
 
-Renderer
+1. Convert 2D images to .ply using [COLMAP](https://colmap.github.io/tutorial.html#quickstart) or other tool
+2. Drop .ply file into [splat](splat/) viewer.
 
-`npm run dev`
+[TODO] patch splat viewer s.t. automatically convert 2D images to .ply without going through COLMAP GUI
 
 ## CLIP Similarity
 

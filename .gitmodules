@@ -1,1 +1,4 @@
 
+[submodule "splat"]
+	path = splat
+	url = https://github.com/jespiron/splat.git
