@@ -10,9 +10,9 @@ Final project for 11785.
 * [Brandon Dong (bjdong)](https://github.com/sad-ish-cat)
 * [Aradhya Talan (atalan)](https://github.com/aradhyatalan)
 
-**[TODO] Project Summary:** 3D image edit (shout-out Wonsik for proposing idea and detailed literature review)
+**Project Summary:**
 
-[TODO] replace with proposal
+Proposal [here](https://drive.google.com/file/d/1CPV3XIylqadEOKOQzVrcmU3B1-otRehx/view?usp=sharing)
 
 # Contributing
 
@@ -23,12 +23,6 @@ When your PR is approved, please select **[Squash and merge](https://www.lloydat
 After merging the PR, clean up your branch locally and remotely.
 1. Locally: `git branch -D your-nickname/name-of-change`
 2. Remotely: deleted automatically since "Automatically delete head branches" is enabled. If it doesn't work, can delete manually by clicking the trash icon next to your branch.
-
-**Where to open PR from?**
-
-If you're making a change that's not related to model training, can make a branch on this repo and open a PR.
-
-If you're contributing a model, please fork this repo and open a PR from your fork.
 
 **Set up:**
 1. Fork this repository
@@ -62,5 +56,3 @@ Two ways to test.
 ## CLIP Similarity
 
 Compute pairwise similarity of edited images
-
-[REVIEW] Then get the median similarity score out of all pairwise scores (or some other measure of center)
