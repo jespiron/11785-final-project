@@ -53,7 +53,7 @@ PYTHONPATH=$(pwd) python3 ./scripts/stable_txt2img.py
 ```
 where `--ckpt` specifies the model and `--prompt` specifies the text prompt.
 
-❗ The checkpoint `sd-v1-4-full-ema.ckpt` is too large to upload to Github. Please download it from [HuggingFace](https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/tree/main) and place it under the `models/ldm/stable-diffusion-v1` directory.
+❗ The checkpoint `sd-v1-4-full-ema.ckpt` is too large to upload to Github. Please download it from [HuggingFace](https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/tree/main) and place it under `/latent-diffusion-models/models/ldm/stable-diffusion-v1`. Note `/latent-diffusion-models/models/ldm/` is different from `/latent-diffusion-models/ldm/models/`; the former is for holding model checkpoints, while the second is for holding implementations of the models.
 
 List of other pretrained diffusion models is listed in the [Stable Diffusion repo](https://github.com/CompVis/stable-diffusion?tab=readme-ov-file#stable-diffusion-v1).
 
