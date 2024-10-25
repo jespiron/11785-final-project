@@ -1,0 +1,21 @@
+torch -f https://download.pytorch.org/whl/torch_stable.html
+torchvision -f https://download.pytorch.org/whl/torch_stable.html
+numpy
+albumentations
+opencv-python
+pudb
+imageio
+imageio-ffmpeg
+pytorch-lightning
+omegaconf
+test-tube
+streamlit
+setuptools
+pillow
+einops
+torch-fidelity
+taming-transformers-rom1504
+transformers
+torchmetrics
+kornia
+-e git+https://github.com/openai/CLIP.git@main#egg=clip
