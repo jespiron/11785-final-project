@@ -42,7 +42,14 @@ First, navigate to the `/latent-diffusion-models` directory.
 
 To generate images using a specified diffusion model and prompt, run `stable_txt2img.py`:
 ```
-PYTHONPATH=$(pwd) python3 ./scripts/stable_txt2img.py --ddim_eta 0.0 --n_samples 1 --n_iter 1 --scale 10.0 --ddim_steps 50  --ckpt ./models/ldm/stable-diffusion-v1/sd-v1-4-full-ema.ckpt --prompt "a photo of a dog" 
+PYTHONPATH=$(pwd) python3 ./scripts/stable_txt2img.py
+    --ddim_eta 0.0
+    --n_samples 1
+    --n_iter 1
+    --scale 10.0
+    --ddim_steps 50
+    --ckpt ./models/ldm/stable-diffusion-v1/sd-v1-4-full-ema.ckpt
+    --prompt "a photo of a dog" 
 ```
 where `--ckpt` specifies the model and `--prompt` specifies the text prompt.
 
