@@ -6,7 +6,7 @@ opencv-python
 pudb
 imageio
 imageio-ffmpeg
-pytorch-lightning
+pytorch-lightning==1.6.3
 omegaconf
 test-tube
 streamlit
