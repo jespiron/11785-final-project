@@ -1329,8 +1329,7 @@ def main(args):
             if not args.no_safe_serialization
             else "pytorch_custom_diffusion_weights.bin"
         )
-        # TODO: should fix load_attn_procs code - try the inference code of readme file and check does that work.
-        pipeline.unet.load_attn_procs(args.output_dir, weight_name=weight_name)
+        pipeline.unet.load_attn_procs(args.output_dir, weight_name=weight_name, _pipeline=pipeline)
         for token in args.modifier_token:
             token_weight_name = f"{token}.safetensors" if not args.no_safe_serialization else f"{token}.bin"
             pipeline.load_textual_inversion(args.output_dir, weight_name=token_weight_name)

@@ -234,7 +234,13 @@ class UNet2DConditionLoadersMixin:
             is_model_cpu_offload, is_sequential_cpu_offload = self._optionally_disable_offloading(_pipeline=_pipeline)
 
             # only custom diffusion needs to set attn processors
-            self.set_attn_processor(attn_processors)
+            import copy
+            _attn_processors = copy.deepcopy(_pipeline.unet.attn_processors)
+            for k, v in _attn_processors.items():
+                if k in attn_processors.keys():
+                    _attn_processors[k] = attn_processors[k]
+
+            self.set_attn_processor(_attn_processors)
             self.to(dtype=self.dtype, device=self.device)
 
         # Offload back.
