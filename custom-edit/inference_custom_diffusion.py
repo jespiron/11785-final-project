@@ -8,7 +8,7 @@ from diffusers import (
 
 pretrained_model_name_or_path = "CompVis/stable-diffusion-v1-4"
 model_path = './output'
-text_prompt = "a photo of <new1> man and <new2> woman."
+text_prompt = "a photo of <new1> dog."
 device = 'cuda'
 seed = 47
 num_images = 4
@@ -21,7 +21,6 @@ pipe = pipe.to(device)
 
 pipe.unet.load_attn_procs(model_path, weight_name="pytorch_custom_diffusion_weights.safetensors", _pipeline=pipe)
 pipe.load_textual_inversion(model_path, weight_name="<new1>.safetensors")
-pipe.load_textual_inversion(model_path, weight_name="<new2>.safetensors")
 
 generator = torch.Generator(device=device).manual_seed(seed)
 images = [
