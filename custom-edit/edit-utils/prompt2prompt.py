@@ -132,7 +132,9 @@ class AttentionStore(AttentionControl):
     def get_empty_store():
         return {"down_cross": [], "mid_cross": [], "up_cross": [],
                 "down_self": [],  "mid_self": [],  "up_self": []}
-
+    
+    # NOTE: Attention maps are saved here on each time step
+    # Verify this works correctly after replacing ldm_stable in config.py
     def forward(self, attn, is_cross: bool, place_in_unet: str):
         key = f"{place_in_unet}_{'cross' if is_cross else 'self'}"
         if attn.shape[1] <= 32 ** 2:  # avoid memory overhead
@@ -190,6 +192,8 @@ class AttentionControlEdit(AttentionStore, abc.ABC):
             attn_base, attn_repalce = attn[0], attn[1:]
             if is_cross:
                 alpha_words = self.cross_replace_alpha[self.cur_step]
+                # NOTE: attention maps are injected here after one of replace, refine, reweight
+                # Verify this works correctly after replacing ldm_stable in config.py
                 attn_repalce_new = self.replace_cross_attention(attn_base, attn_repalce) * alpha_words + (1 - alpha_words) * attn_repalce
                 attn[1:] = attn_repalce_new
             else:
