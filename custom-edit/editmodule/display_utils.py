@@ -1,7 +1,7 @@
 import torch
 import editmodule.ptp_utils as ptp_utils
 from editmodule.prompt2prompt import EmptyControl
-from editmodule.config import config
+from editmodule.config import config, NUM_DDIM_STEPS, GUIDANCE_SCALE
 from tqdm import tqdm
 from typing import List, Optional
 
