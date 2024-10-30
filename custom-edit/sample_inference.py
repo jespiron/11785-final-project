@@ -16,6 +16,7 @@ except AttributeError:
 
 config.tokenizer = config.ldm_stable.tokenizer
 
+#-----
 image_path = "./input/gnochi_mirror.jpeg"
 prompt = "a cat sitting next to a mirror"
 null_inversion = NullInversion(config.ldm_stable)
@@ -34,3 +35,27 @@ eq_params = {"words": ("silver", 'sculpture', ), "values": (2,2,)}  # amplify at
  
 controller = make_controller(prompts, False, cross_replace_steps, self_replace_steps, blend_word, eq_params)
 images, _ = run_and_display(prompts, controller, run_baseline=False, latent=x_t, uncond_embeddings=uncond_embeddings)
+#---
+
+# Created EditSession to modularize the above code
+# After we get the above code working, can replace with this
+'''
+from editmodule.editsession import EditSession
+
+editsession = EditSession(config.ldm_stable)
+editsession.init_image(
+    image_path="./input/gnochi_mirror.jpeg",
+    prompt = "a cat sitting next to a mirror"
+)
+editsession.init_controller(
+    prompts=[
+        "a cat sitting next to a mirror",
+        "a silver cat sculpture sitting next to a mirror"
+    ],
+    cross_replace_steps = {'default_': .8, }
+    self_replace_steps = .6
+    blend_word = ((('cat',), ("cat",))) # for local edit
+    eq_params = {"words": ("silver", 'sculpture', ), "values": (2,2,)}  # amplify attention to the words "silver" and "sculpture" by *2 
+)
+images, x_t = editsession.run()
+'''
