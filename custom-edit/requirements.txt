@@ -6,3 +6,7 @@ tensorboard
 Jinja2
 wandb
 xformers
+
+# p2p_utils.py
+ipython
+ipywidgets

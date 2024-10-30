@@ -1,3 +1,10 @@
+import torch
+import editmodule.ptp_utils as ptp_utils
+from editmodule.prompt2prompt import EmptyControl
+from editmodule.config import config
+from tqdm import tqdm
+from typing import List, Optional
+
 @torch.no_grad()
 def text2image_ldm_stable(
     model,
@@ -52,19 +59,7 @@ def run_and_display(prompts, controller, latent=None, run_baseline=False, genera
         print("w.o. prompt-to-prompt")
         images, latent = run_and_display(prompts, EmptyControl(), latent=latent, run_baseline=False, generator=generator)
         print("with prompt-to-prompt")
-    images, x_t = text2image_ldm_stable(ldm_stable, prompts, controller, latent=latent, num_inference_steps=NUM_DDIM_STEPS, guidance_scale=GUIDANCE_SCALE, generator=generator, uncond_embeddings=uncond_embeddings)
+    images, x_t = text2image_ldm_stable(config.ldm_stable, prompts, controller, latent=latent, num_inference_steps=NUM_DDIM_STEPS, guidance_scale=GUIDANCE_SCALE, generator=generator, uncond_embeddings=uncond_embeddings)
     if verbose:
         ptp_utils.view_images(images)
     return images, x_t
-
-prompts = ["a cat sitting next to a mirror",
-           "a silver cat sculpture sitting next to a mirror"
-        ]
-
-cross_replace_steps = {'default_': .8, }
-self_replace_steps = .6
-blend_word = ((('cat',), ("cat",))) # for local edit
-eq_params = {"words": ("silver", 'sculpture', ), "values": (2,2,)}  # amplify attention to the words "silver" and "sculpture" by *2 
- 
-controller = make_controller(prompts, False, cross_replace_steps, self_replace_steps, blend_word, eq_params)
-images, _ = run_and_display(prompts, controller, run_baseline=False, latent=x_t, uncond_embeddings=uncond_embeddings)

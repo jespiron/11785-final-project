@@ -1,9 +1,14 @@
+import abc
+import numpy as np
 import torch
 import torch.nn.functional as nnf
-import numpy as np
-import ptp_utils
-from config import LOW_RESOURCE, MAX_NUM_WORDS, NUM_DDIM_STEPS, tokenizer, device
-from typing import List, Optional, Tuple, Union
+
+import editmodule.ptp_utils as ptp_utils
+import editmodule.seq_aligner as seq_aligner
+
+from editmodule.config import LOW_RESOURCE, MAX_NUM_WORDS, NUM_DDIM_STEPS, config, device
+from PIL import Image
+from typing import Dict, List, Optional, Tuple, Union
 
 class LocalBlend:
     
@@ -39,7 +44,7 @@ class LocalBlend:
             if type(words_) is str:
                 words_ = [words_]
             for word in words_:
-                ind = ptp_utils.get_word_inds(prompt, word, tokenizer)
+                ind = ptp_utils.get_word_inds(prompt, word, config.tokenizer)
                 alpha_layers[i, :, :, :, :, ind] = 1
         
         if substruct_words is not None:
@@ -48,7 +53,7 @@ class LocalBlend:
                 if type(words_) is str:
                     words_ = [words_]
                 for word in words_:
-                    ind = ptp_utils.get_word_inds(prompt, word, tokenizer)
+                    ind = ptp_utils.get_word_inds(prompt, word, config.tokenizer)
                     substruct_layers[i, :, :, :, :, ind] = 1
             self.substruct_layers = substruct_layers.to(device)
         else:
@@ -206,8 +211,9 @@ class AttentionControlEdit(AttentionStore, abc.ABC):
                  self_replace_steps: Union[float, Tuple[float, float]],
                  local_blend: Optional[LocalBlend]):
         super(AttentionControlEdit, self).__init__()
+        self.prompts = prompts
         self.batch_size = len(prompts)
-        self.cross_replace_alpha = ptp_utils.get_time_words_attention_alpha(prompts, num_steps, cross_replace_steps, tokenizer).to(device)
+        self.cross_replace_alpha = ptp_utils.get_time_words_attention_alpha(prompts, num_steps, cross_replace_steps, config.tokenizer).to(device)
         if type(self_replace_steps) is float:
             self_replace_steps = 0, self_replace_steps
         self.num_self_replace = int(num_steps * self_replace_steps[0]), int(num_steps * self_replace_steps[1])
@@ -221,7 +227,7 @@ class AttentionReplace(AttentionControlEdit):
     def __init__(self, prompts, num_steps: int, cross_replace_steps: float, self_replace_steps: float,
                  local_blend: Optional[LocalBlend] = None):
         super(AttentionReplace, self).__init__(prompts, num_steps, cross_replace_steps, self_replace_steps, local_blend)
-        self.mapper = seq_aligner.get_replacement_mapper(prompts, tokenizer).to(device)
+        self.mapper = seq_aligner.get_replacement_mapper(prompts, config.tokenizer).to(device)
         
 
 class AttentionRefine(AttentionControlEdit):
@@ -235,7 +241,7 @@ class AttentionRefine(AttentionControlEdit):
     def __init__(self, prompts, num_steps: int, cross_replace_steps: float, self_replace_steps: float,
                  local_blend: Optional[LocalBlend] = None):
         super(AttentionRefine, self).__init__(prompts, num_steps, cross_replace_steps, self_replace_steps, local_blend)
-        self.mapper, alphas = seq_aligner.get_refinement_mapper(prompts, tokenizer)
+        self.mapper, alphas = seq_aligner.get_refinement_mapper(prompts, config.tokenizer)
         self.mapper, alphas = self.mapper.to(device), alphas.to(device)
         self.alphas = alphas.reshape(alphas.shape[0], 1, 1, alphas.shape[1])
 
@@ -263,7 +269,7 @@ def get_equalizer(text: str, word_select: Union[int, Tuple[int, ...]], values: U
     equalizer = torch.ones(1, 77)
     
     for word, val in zip(word_select, values):
-        inds = ptp_utils.get_word_inds(text, word, tokenizer)
+        inds = ptp_utils.get_word_inds(text, word, config.tokenizer)
         equalizer[:, inds] = val
     return equalizer
 
@@ -274,7 +280,7 @@ def aggregate_attention(attention_store: AttentionStore, res: int, from_where: L
     for location in from_where:
         for item in attention_maps[f"{location}_{'cross' if is_cross else 'self'}"]:
             if item.shape[1] == num_pixels:
-                cross_maps = item.reshape(len(prompts), -1, res, res, item.shape[-1])[select]
+                cross_maps = item.reshape(len(attention_store.prompts), -1, res, res, item.shape[-1])[select]
                 out.append(cross_maps)
     out = torch.cat(out, dim=0)
     out = out.sum(0) / out.shape[0]
@@ -285,7 +291,7 @@ def make_controller(prompts: List[str], is_replace_controller: bool, cross_repla
     if blend_words is None:
         lb = None
     else:
-        lb = LocalBlend(prompts, blend_word)
+        lb = LocalBlend(prompts, blend_words)
     if is_replace_controller:
         controller = AttentionReplace(prompts, NUM_DDIM_STEPS, cross_replace_steps=cross_replace_steps, self_replace_steps=self_replace_steps, local_blend=lb)
     else:
@@ -298,8 +304,8 @@ def make_controller(prompts: List[str], is_replace_controller: bool, cross_repla
 
 
 def show_cross_attention(attention_store: AttentionStore, res: int, from_where: List[str], select: int = 0):
-    tokens = tokenizer.encode(prompts[select])
-    decoder = tokenizer.decode
+    tokens = config.tokenizer.encode(attention_store.prompts[select])
+    decoder = config.tokenizer.decode
     attention_maps = aggregate_attention(attention_store, res, from_where, True, select)
     images = []
     for i in range(len(tokens)):
