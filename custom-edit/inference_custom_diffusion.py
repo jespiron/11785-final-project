@@ -7,8 +7,8 @@ from diffusers import (
 )
 
 pretrained_model_name_or_path = "CompVis/stable-diffusion-v1-4"
-model_path = './output'
-text_prompt = "a photo of <new1> dog."
+model_path = './output/cat'
+text_prompt = "a photo of <new1> cat."
 device = 'cuda'
 seed = 47
 num_images = 4
@@ -29,4 +29,4 @@ images = [
 ]
 
 for i in range(len(images)):
-    images[i].save(f"./output/output_img_{i}.png")
+    images[i].save(f"{model_path}/output_img_{i}_{text_prompt}.png")

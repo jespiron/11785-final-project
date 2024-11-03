@@ -1356,6 +1356,9 @@ def main(args):
                         }
                     )
 
+            for i in range(len(images)):
+                images[i].save(f"{args.output_dir}/output_images/{args.seed}_img_{i}.png")
+
         if args.push_to_hub:
             save_model_card(
                 repo_id,

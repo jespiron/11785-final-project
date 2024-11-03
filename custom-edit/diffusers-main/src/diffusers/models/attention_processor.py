@@ -3346,6 +3346,8 @@ class CustomDiffusionAttnProcessor2_0(nn.Module):
             self.to_out_custom_diffusion.append(nn.Linear(hidden_size, hidden_size, bias=out_bias))
             self.to_out_custom_diffusion.append(nn.Dropout(dropout))
 
+        self.controller = None
+
     def __call__(
         self,
         attn: Attention,
@@ -3393,7 +3395,7 @@ class CustomDiffusionAttnProcessor2_0(nn.Module):
 
         # the output of sdp = (batch, num_heads, seq_len, head_dim)
         # TODO: add support for attn.scale when we move to Torch 2.1
-        hidden_states = F.scaled_dot_product_attention(
+        hidden_states = self.scaled_dot_product_attention(
             query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
         )
 
@@ -3412,6 +3414,41 @@ class CustomDiffusionAttnProcessor2_0(nn.Module):
             hidden_states = attn.to_out[1](hidden_states)
 
         return hidden_states
+
+    def add_controller(self, controller, is_cross, place_in_unet):
+        self.controller = controller
+        self.is_cross = is_cross
+        self.place_in_unet = place_in_unet
+
+    def scaled_dot_product_attention(self, query, key, value, attn_mask=None, dropout_p=0.0,
+                                     is_causal=False, scale=None, enable_gqa=False) -> torch.Tensor:
+        L, S = query.size(-2), key.size(-2)
+        scale_factor = 1 / math.sqrt(query.size(-1)) if scale is None else scale
+        attn_bias = torch.zeros(L, S, dtype=query.dtype)
+        attn_bias = attn_bias.to(query.device)
+        if is_causal:
+            assert attn_mask is None
+            temp_mask = torch.ones(L, S, dtype=torch.bool).tril(diagonal=0)
+            attn_bias.masked_fill_(temp_mask.logical_not(), float("-inf"))
+            attn_bias.to(query.dtype)
+
+        if attn_mask is not None:
+            if attn_mask.dtype == torch.bool:
+                attn_bias.masked_fill_(attn_mask.logical_not(), float("-inf"))
+            else:
+                attn_bias += attn_mask
+
+        if enable_gqa:
+            key = key.repeat_interleave(query.size(-3) // key.size(-3), -3)
+            value = value.repeat_interleave(query.size(-3) // value.size(-3), -3)
+
+        attn_weight = query @ key.transpose(-2, -1) * scale_factor
+        attn_weight += attn_bias
+        attn_weight = torch.softmax(attn_weight, dim=-1)
+        if self.controller is not None:
+            attn_weight = self.controller(attn_weight[0], self.is_cross, self.place_in_unet)
+        attn_weight = torch.dropout(attn_weight, dropout_p, train=True)
+        return attn_weight @ value
 
 
 class SlicedAttnProcessor:

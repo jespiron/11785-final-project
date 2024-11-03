@@ -136,7 +136,7 @@ export OUTPUT_DIR="path-to-save-model"
 accelerate launch train_custom_diffusion.py \
   --pretrained_model_name_or_path=$MODEL_NAME  \
   --output_dir=$OUTPUT_DIR \
-  --concepts_list=./concept_list.json \
+  --concepts_list=./concept_list_hp_hg.json \
   --with_prior_preservation --real_prior --prior_loss_weight=1.0 \
   --resolution=512  \
   --train_batch_size=2  \
