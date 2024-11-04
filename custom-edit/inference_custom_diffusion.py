@@ -24,9 +24,9 @@ pipe.load_textual_inversion(model_path, weight_name="<new1>.safetensors")
 
 generator = torch.Generator(device=device).manual_seed(seed)
 images = [
-    pipe(text_prompt, num_inference_steps=25, generator=generator, eta=1.0).images[0]
+    pipe(text_prompt, num_inference_steps=50, generator=generator, eta=1.0).images[0]
     for _ in range(num_images)
 ]
 
 for i in range(len(images)):
-    images[i].save(f"{model_path}/output_img_{i}_{text_prompt}.png")
+    images[i].save(f"{model_path}/output_images/image_{i}_{text_prompt}.png")

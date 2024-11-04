@@ -621,7 +621,7 @@ def run_and_display(prompts, controller, latent=None, run_baseline=False, genera
         print("w.o. prompt-to-prompt")
         images, latent = run_and_display(prompts, EmptyControl(), latent=latent, run_baseline=False,
                                          generator=generator)
-        print("with prompt-to-prompt")
+    print("with prompt-to-prompt")
     images, x_t = text2image_ldm_stable(ldm_stable, prompts, controller, latent=latent,
                                         num_inference_steps=NUM_DDIM_STEPS, guidance_scale=GUIDANCE_SCALE,
                                         generator=generator, uncond_embeddings=uncond_embeddings)
@@ -634,11 +634,12 @@ def main():
     image_path = "./data/p2p/gnochi_mirror.jpeg"
     prompt = "a cat sitting next to a mirror"
     output_folder = './output/edit-cat'
-    (image_gt, image_enc), x_t, uncond_embeddings = null_inversion.invert(image_path, prompt, offsets=(0,0,200,0), verbose=True)
+    (image_gt, image_enc), x_t, uncond_embeddings = null_inversion.invert(image_path, prompt, offsets=(0,0,200,0), num_inner_steps=20, verbose=True)
 
     print("Modify or remove offsets according to your image!")
 
     # Reconstruction
+    # 0번째 layer만 가져오는 문제도 확인 -> 아 uncond만 시각화하고있었네? 이런 ~
     prompts = [prompt]
     controller = AttentionStore()
     image_inv, x_t = run_and_display(prompts, controller, run_baseline=False, latent=x_t,
