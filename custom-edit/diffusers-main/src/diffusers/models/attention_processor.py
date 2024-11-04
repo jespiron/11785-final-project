@@ -19,6 +19,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+from einops import rearrange
+
 from ..image_processor import IPAdapterMaskProcessor
 from ..utils import deprecate, logging
 from ..utils.import_utils import is_torch_npu_available, is_xformers_available
@@ -3446,7 +3448,10 @@ class CustomDiffusionAttnProcessor2_0(nn.Module):
         attn_weight += attn_bias
         attn_weight = torch.softmax(attn_weight, dim=-1)
         if self.controller is not None:
-            attn_weight = self.controller(attn_weight[0], self.is_cross, self.place_in_unet)
+            b, h = attn_weight.shape[:2]
+            attn_weight = rearrange(attn_weight, 'b h p c -> (b h) p c')
+            attn_weight = self.controller(attn_weight, self.is_cross, self.place_in_unet)
+            attn_weight = rearrange(attn_weight, '(b h) p c -> b h p c', b=b, h=h)
         attn_weight = torch.dropout(attn_weight, dropout_p, train=True)
         return attn_weight @ value
 

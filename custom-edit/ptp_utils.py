@@ -311,8 +311,7 @@ def get_time_words_attention_alpha(prompts, num_steps,
         cross_replace_steps["default_"] = (0., 1.)
     alpha_time_words = torch.zeros(num_steps + 1, len(prompts) - 1, max_num_words)
     for i in range(len(prompts) - 1):
-        alpha_time_words = update_alpha_time_word(alpha_time_words, cross_replace_steps["default_"],
-                                                  i)
+        alpha_time_words = update_alpha_time_word(alpha_time_words, cross_replace_steps["default_"], i)
     for key, item in cross_replace_steps.items():
         if key != "default_":
              inds = [get_word_inds(prompts[i], key, tokenizer) for i in range(1, len(prompts))]

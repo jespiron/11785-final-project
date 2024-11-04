@@ -649,23 +649,19 @@ def main():
     ptp_utils.save_images([image_gt, image_enc, image_inv[0]], save_path=os.path.join(output_folder, 'reconstruct.jpg'))
     save_cross_attention(prompts, controller, 16, ["up", "down"], save_path=os.path.join(output_folder, 'reconstruct_attn_map.jpg'))
 
-    # Editing
+    # Editing - add token
     prompts = ["a cat sitting next to a mirror",
-               "a tiger sitting next to a mirror"
+               "a <new1> cat sitting next to a mirror"
                ]
 
     cross_replace_steps = {'default_': .8, }
-    self_replace_steps = .5
-    blend_word = ((('cat',), ("tiger",)))  # for local edit. If it is not local yet - use only the source object: blend_word = ((('cat',), ("cat",))).
-    eq_params = {"words": ("tiger",), "values": (2,)}  # amplify attention to the word "tiger" by *2
+    self_replace_steps = .6
+    blend_word = ((('cat',), ("cat",)))
+    eq_params = {"words": ("<new1>",), "values": (2,)}  # amplify attention to the word "tiger" by *2
 
-    controller = make_controller(prompts, True, cross_replace_steps, self_replace_steps, blend_word, eq_params)
-    images, _ = run_and_display(prompts, controller, run_baseline=False, latent=x_t,
-                                uncond_embeddings=uncond_embeddings)
-    ptp_utils.save_images(images, save_path=os.path.join(output_folder, 'edited.jpg'))
-
-    print(
-        "Image is highly affected by the self_replace_steps, usually 0.4 is a good default value, but you may want to try the range 0.3,0.4,0.5,0.7 ")
+    controller = make_controller(prompts, False, cross_replace_steps, self_replace_steps, blend_word, eq_params)
+    images, _ = run_and_display(prompts, controller, run_baseline=False, latent=x_t, uncond_embeddings=uncond_embeddings)
+    ptp_utils.save_images(images, save_path=os.path.join(output_folder, f'custom_edit_{cross_replace_steps["default_"]}_{self_replace_steps}_{eq_params["values"][0]}.jpg'))
 
 
 if __name__ == '__main__':
