@@ -17,7 +17,7 @@ except AttributeError:
 config.tokenizer = config.ldm_stable.tokenizer
 
 #-----
-image_path = "./input/gnochi_mirror.jpeg"
+image_path = "./input/gnochi_mirror1.jpeg"
 prompt = "a cat sitting next to a mirror"
 null_inversion = NullInversion(config.ldm_stable)
 (image_gt, image_enc), x_t, uncond_embeddings = null_inversion.invert(image_path, prompt, offsets=(0,0,200,0), verbose=True)

@@ -1,5 +1,10 @@
-.DS_Store
 .venv
-.jess
+
+.DS_Store
 __pycache__/
-*.ckpt
+.pyc
+
+.ckpt
+
+.jpg
+.png
