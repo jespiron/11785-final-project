@@ -2,3 +2,6 @@
 [submodule "splat"]
 	path = splat
 	url = https://github.com/jespiron/splat.git
+[submodule "t2v_metrics"]
+	path = t2v_metrics
+	url = https://github.com/jespiron/t2v_metrics.git
