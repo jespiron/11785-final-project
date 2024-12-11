@@ -639,7 +639,6 @@ def main():
     print("Modify or remove offsets according to your image!")
 
     # Reconstruction
-    # 0번째 layer만 가져오는 문제도 확인 -> 아 uncond만 시각화하고있었네? 이런 ~
     prompts = [prompt]
     controller = AttentionStore()
     image_inv, x_t = run_and_display(prompts, controller, run_baseline=False, latent=x_t,
